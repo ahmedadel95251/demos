@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>[v1 Editorial] Optify — Websites, AI agents & automation</title>
+<meta name="description" content="Optify builds websites, AI agents and automations for local businesses. We build your demo first, then you decide.">
+<!--FONTS--><style>@font-face{font-family:"Zodiak";src:url("fonts/Zodiak-Variable.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap}@font-face{font-family:"Zodiak";src:url("fonts/Zodiak-VariableItalic.woff2") format("woff2");font-weight:100 900;font-style:italic;font-display:swap}@font-face{font-family:"Satoshi";src:url("fonts/Satoshi-Variable.woff2") format("woff2");font-weight:300 900;font-style:normal;font-display:swap}@font-face{font-family:"Satoshi";src:url("fonts/Satoshi-VariableItalic.woff2") format("woff2");font-weight:300 900;font-style:italic;font-display:swap}:root{--head:"Zodiak",serif;--head-w:400;--h1:clamp(42px,5.4vw,80px);--head-ls:-.035em;--body:"Satoshi",system-ui,sans-serif;--em:"Zodiak",serif;--em-style:italic;--em-w:300;--em-color:var(--accent)}</style><!--/FONTS-->
+<style>
+:root{
+  --paper:#f3f2ee;--card:#ffffffb8;--ink:#0f1013;--muted:#6b6d73;--line:#0f101314;
+  --accent:#ff5a1f;--accent-soft:#ffe3d6;--ok:#17a34a;
+  --ease:cubic-bezier(.23,1,.32,1);--move:cubic-bezier(.77,0,.175,1);
+  --r:22px;--pad:clamp(16px,4vw,56px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font:400 16px/1.5 var(--body);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+em{font-family:var(--em);font-style:var(--em-style);font-weight:var(--em-w);color:var(--em-color);letter-spacing:-.01em}
+h1,h2,.tile h3,.big,.logo{font-family:var(--head)}
+.wrap{max-width:1240px;margin:0 auto;padding:0 var(--pad)}
+.cap{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+/* ambient field: two slow blobs + grain, behind everything */
+.field{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.field i{position:absolute;border-radius:50%;filter:blur(80px);opacity:.55}
+.field i:nth-child(1){width:52vw;height:52vw;right:-14vw;top:-18vw;background:#ffc9b0;animation:drift 22s var(--move) infinite alternate}
+.field i:nth-child(2){width:40vw;height:40vw;left:-12vw;top:40vh;background:#d9dcff;animation:drift 28s var(--move) infinite alternate-reverse}
+.field:after{content:"";position:absolute;inset:0;opacity:.06;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+@keyframes drift{to{transform:translate3d(-6vw,8vh,0) scale(1.12)}}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;gap:10px;height:48px;padding:0 22px;border-radius:999px;font-weight:500;font-size:15px;transition:transform .16s var(--ease),background-color .2s ease}
+.btn:active{transform:scale(.97)}
+.btn--ink{background:var(--ink);color:#fff}
+.btn--ghost{border:1px solid var(--line);background:#ffffff80}
+.btn svg{transition:transform .25s var(--ease)}
+@media (hover:hover) and (pointer:fine){.btn--ink:hover{background:#26282e}.btn:hover svg{transform:translateX(3px)}}
+
+/* nav */
+nav{position:sticky;top:12px;z-index:20;margin:12px auto 0;width:min(1240px,calc(100% - 2*var(--pad)));display:flex;align-items:center;justify-content:space-between;
+  padding:8px 8px 8px 20px;border-radius:999px;background:#ffffffa6;border:1px solid #ffffffcc;backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);box-shadow:0 10px 30px -18px #0f101340}
+.logo{display:flex;align-items:center;gap:8px;font-weight:600;font-size:19px;letter-spacing:-.03em}
+.logo b{width:22px;height:22px;border-radius:7px;background:var(--ink);position:relative}
+.logo b:after{content:"";position:absolute;inset:6px;border-radius:50%;background:var(--accent)}
+.links{display:flex;gap:30px;font-size:14px;color:#3a3c42}
+.links a{transition:color .2s ease}
+.links a:hover{color:var(--ink)}
+nav .btn{height:40px;font-size:14px;padding:0 18px}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;min-height:calc(100svh - 76px);padding-block:56px 72px}
+.chip{display:inline-flex;align-items:center;gap:10px;padding:6px 14px 6px 6px;border-radius:999px;border:1px solid var(--line);background:#ffffff8c;font-size:13px;color:#3a3c42}
+.chip span{display:inline-flex;gap:4px}
+.chip span i{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.chip span i:nth-child(2){background:#7b84ff}.chip span i:nth-child(3){background:var(--ink)}
+h1{font-weight:var(--head-w);font-size:var(--h1,clamp(44px,6.4vw,92px));line-height:.98;letter-spacing:var(--head-ls);margin-top:22px}
+h1 em{font-size:1.08em}
+.lede{margin-top:22px;max-width:30em;font-size:18px;color:#45474d}
+.ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
+.note{margin-top:18px;font-size:13px;color:var(--muted)}
+
+/* the 2 a.m. demo */
+.demo{position:relative;border-radius:28px;padding:18px;background:var(--card);border:1px solid #fff;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 40px 80px -40px #0f101359,inset 0 1px 0 #fff}
+.demo__top{display:flex;justify-content:space-between;align-items:center;padding:4px 6px 14px}
+.clock{font-variant-numeric:tabular-nums;font-weight:500;font-size:13px}
+.clock small{color:var(--muted);font-weight:400;margin-left:6px}
+.toggle{position:relative;display:grid;grid-template-columns:1fr 1fr;padding:3px;border-radius:999px;background:#0f10130d;font-size:13px}
+.toggle button{position:relative;z-index:1;padding:7px 12px;white-space:nowrap;border-radius:999px;color:var(--muted);transition:color .25s ease}
+.toggle button[aria-pressed=true]{color:var(--ink)}
+.toggle .pill{position:absolute;top:3px;bottom:3px;left:3px;width:calc(50% - 3px);border-radius:999px;background:#fff;box-shadow:0 2px 8px -2px #0f101330;transition:transform .45s var(--ease)}
+.toggle[data-on="1"] .pill{transform:translateX(100%)}
+.thread{height:460px;border-radius:20px;background:#f7f6f2;border:1px solid var(--line);padding:18px;display:flex;flex-direction:column;gap:10px;overflow:hidden}
+.who{display:flex;align-items:center;gap:10px;padding-bottom:12px;border-bottom:1px solid var(--line);margin-bottom:4px}
+.who i{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#ffb48f,var(--accent))}
+.who b{display:block;font-weight:500;font-size:14px}
+.who small{font-size:12px;color:var(--muted)}
+.who small.live{color:var(--ok)}
+.msg{max-width:82%;padding:10px 14px;border-radius:16px;font-size:14px;line-height:1.4;opacity:0;transform:translateY(8px) scale(.98);filter:blur(3px);transition:opacity .35s var(--ease),transform .45s var(--ease),filter .35s ease}
+.msg.in{opacity:1;transform:none;filter:none}
+.msg.them{align-self:flex-start;background:#fff;border:1px solid var(--line);border-bottom-left-radius:6px}
+.msg.us{align-self:flex-end;background:var(--ink);color:#fff;border-bottom-right-radius:6px}
+.msg.sys{align-self:center;background:none;color:var(--muted);font-size:12px;padding:4px}
+.msg.slot{display:flex;gap:6px;flex-wrap:wrap;background:none;padding:0}
+.msg.slot span{padding:6px 12px;border-radius:999px;border:1px solid #ffffff40;background:#fff;color:var(--ink);border:1px solid var(--line);font-size:13px}
+.msg.slot span.pick{background:var(--accent);color:#fff;border-color:var(--accent)}
+.typing{display:inline-flex;gap:4px;padding:12px 14px}
+.typing i{width:6px;height:6px;border-radius:50%;background:#ffffffb0;animation:dot 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes dot{50%{transform:translateY(-3px);opacity:.4}}
+.demo__foot{display:flex;justify-content:space-between;align-items:center;padding:14px 6px 2px;font-size:13px;color:var(--muted)}
+.demo__foot b{font-weight:500;color:var(--ink);transition:color .3s ease}
+.demo__foot b.lost{color:#c2410c}.demo__foot b.won{color:var(--ok)}
+
+/* section heads */
+section{padding-block:clamp(72px,10vw,128px)}
+.head{display:flex;justify-content:space-between;align-items:end;gap:32px;margin-bottom:40px}
+h2{font-weight:var(--head-w);font-size:clamp(34px,4.6vw,60px);line-height:1;letter-spacing:-.04em;max-width:13em}
+.head p{max-width:24em;color:#45474d}
+
+/* bento */
+.bento{display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:minmax(220px,auto);gap:14px}
+.tile{position:relative;border-radius:var(--r);background:var(--card);border:1px solid #fff;padding:26px;overflow:hidden;box-shadow:0 24px 50px -36px #0f101340;display:flex;flex-direction:column}
+.tile h3{font-weight:500;font-size:22px;letter-spacing:-.025em;margin-top:10px}
+.tile p{color:#55575d;font-size:15px;margin-top:8px;max-width:28em}
+.tile .art{margin-top:auto;padding-top:24px}
+.t-web{grid-column:span 4;grid-row:span 2}
+.t-agent{grid-column:span 2;grid-row:span 2;background:var(--ink);color:#fff;border-color:#ffffff1a}
+.t-agent p{color:#ffffffa8}.t-agent .cap{color:#ffffff80}
+.t-auto{grid-column:span 3}
+.t-demo{grid-column:span 3;background:var(--accent-soft);border-color:#ffffffaa}
+
+/* browser mock */
+.browser{border-radius:14px;border:1px solid var(--line);background:#fff;overflow:hidden;transform:perspective(1200px) rotateX(6deg);transform-origin:50% 100%;transition:transform .6s var(--ease)}
+@media (hover:hover) and (pointer:fine){.t-web:hover .browser{transform:perspective(1200px) rotateX(0)}}
+.browser__bar{display:flex;align-items:center;gap:6px;padding:10px 12px;border-bottom:1px solid var(--line);background:#fafaf8}
+.browser__bar i{width:9px;height:9px;border-radius:50%;background:#e2e1dc}
+.browser__bar span{margin-left:10px;flex:1;height:22px;border-radius:7px;background:#f0efea;font-size:11px;line-height:22px;padding-left:10px;color:var(--muted)}
+.site{display:grid;grid-template-columns:1.2fr 1fr;gap:16px;padding:22px}
+.site .h{height:14px;border-radius:4px;background:var(--ink);width:90%}
+.site .h+.h{width:60%;margin-top:8px}
+.site .l{height:8px;border-radius:4px;background:#e7e6e1;margin-top:10px}
+.site .l.s{width:70%}
+.site .b{display:inline-block;margin-top:16px;height:28px;width:110px;border-radius:999px;background:var(--accent)}
+.site .ph{border-radius:12px;background:linear-gradient(135deg,#ffd7c4,#c9ceff);min-height:140px}
+.site .stars{display:flex;gap:3px;margin-top:14px}
+.site .stars i{width:10px;height:10px;background:#f5b400;clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
+
+/* agent art */
+.bubbles{display:flex;flex-direction:column;gap:8px}
+.bubbles span{align-self:flex-start;padding:9px 13px;border-radius:14px 14px 14px 5px;background:#ffffff14;font-size:13px}
+.bubbles span.r{align-self:flex-end;border-radius:14px 14px 5px 14px;background:var(--accent);color:#fff}
+.langs{display:flex;gap:6px;margin-top:16px;flex-wrap:wrap}
+.langs b{font-weight:400;font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid #ffffff2e;color:#ffffffc0}
+
+/* automation flow */
+.flow{display:flex;align-items:center;gap:0}
+.node{flex:none;padding:9px 13px;border-radius:12px;background:#fff;border:1px solid var(--line);font-size:13px;white-space:nowrap}
+.wire{flex:1;height:2px;min-width:18px;background:linear-gradient(90deg,var(--line) 0 50%,transparent 0) 0 0/10px 2px;position:relative;overflow:hidden}
+.wire:after{content:"";position:absolute;top:0;left:-30%;width:30%;height:2px;background:var(--accent);animation:pulse 2.4s var(--move) infinite}
+.wire:nth-of-type(4):after{animation-delay:.6s}
+@keyframes pulse{to{left:100%}}
+
+/* demo-first */
+.big{font-size:clamp(56px,7vw,96px);font-weight:500;letter-spacing:-.05em;line-height:.9}
+
+/* work */
+.work{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.case{display:block;border-radius:var(--r);border:1px solid var(--line);background:#ffffff8c;padding:22px;transition:transform .3s var(--ease),background-color .2s ease}
+.case:active{transform:scale(.985)}
+@media (hover:hover) and (pointer:fine){.case:hover{transform:translateY(-3px);background:#fff}.case:hover .go{background:var(--accent);color:#fff}}
+.case__img{aspect-ratio:16/10;border-radius:14px;margin-bottom:18px;display:grid;place-items:end start;padding:14px;color:#fff;font-size:12px}
+.case h3{font-weight:500;font-size:19px;letter-spacing:-.02em}
+.case .row{display:flex;justify-content:space-between;align-items:center;margin-top:6px;color:var(--muted);font-size:14px}
+.go{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line);transition:background-color .2s ease,color .2s ease}
+.ph-note{margin-top:18px;font-size:13px;color:var(--muted)}
+.ph-note b{font-weight:500;color:#9a3412;background:#ffedd5;padding:2px 8px;border-radius:6px}
+
+/* process */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line)}
+.step{padding:28px 28px 0 0}
+.step+.step{padding-left:28px;border-left:1px solid var(--line)}
+.step .n{font-family:var(--em);font-style:var(--em-style);font-size:44px;line-height:1;color:var(--accent)}
+.step h3{font-weight:500;font-size:20px;letter-spacing:-.02em;margin-top:18px}
+.step p{color:#55575d;margin-top:8px;font-size:15px}
+
+/* final cta */
+.final{border-radius:32px;background:var(--ink);color:#fff;padding:clamp(36px,6vw,80px);display:grid;grid-template-columns:1.3fr 1fr;gap:40px;align-items:end;position:relative;overflow:hidden}
+.final:before{content:"";position:absolute;width:520px;height:520px;right:-160px;top:-220px;border-radius:50%;background:var(--accent);filter:blur(120px);opacity:.45}
+.final h2{color:#fff;position:relative}
+.final p{color:#ffffffb0;position:relative}
+.final .btn--ink{background:#fff;color:var(--ink);position:relative}
+footer{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-block:36px 48px;font-size:13px;color:var(--muted)}
+
+/* reveal */
+.rv{opacity:1;transform:none}
+.js .rv{opacity:0;transform:translateY(16px);transition:opacity .7s var(--ease),transform .8s var(--ease)}
+.js .rv.on{opacity:1;transform:none}
+
+@media (max-width:980px){
+  .hero{grid-template-columns:1fr;min-height:0;gap:40px;padding-top:40px}
+  .links{display:none}
+  .bento{grid-template-columns:1fr 1fr}
+  .t-web,.t-agent,.t-auto,.t-demo{grid-column:span 2;grid-row:auto}
+  .work{grid-template-columns:1fr}
+  .steps{grid-template-columns:1fr}
+  .step,.step+.step{padding:24px 0;border-left:0;border-bottom:1px solid var(--line)}
+  .head{flex-direction:column;align-items:start}
+  .final{grid-template-columns:1fr}
+}
+@media (max-width:560px){
+  .site{grid-template-columns:1fr}.site .ph{min-height:90px}
+  .flow{flex-wrap:wrap;gap:8px}.wire{display:none}
+  .thread{height:480px}
+  nav .btn span{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*:before,*:after{animation:none!important;transition-duration:.01ms!important}
+  .js .rv{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+<div class="field" aria-hidden="true"><i></i><i></i></div>
+
+<nav>
+  <a class="logo" href="#" aria-label="Optify home"><b></b>Optify</a>
+  <div class="links"><a href="#services">Services</a><a href="#work">Work</a><a href="#process">Process</a></div>
+  <a class="btn btn--ink" href="https://calendly.com/a7mad-3del1995/20min" target="_blank" rel="noopener"><span>Book a call</span>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+</nav>
+
+<main>
+<div class="wrap hero">
+  <div>
+    <div class="chip rv"><span><i></i><i></i><i></i></span>Websites · AI agents · Automation</div>
+    <h1 class="rv">Your business,<br>open at <em>2&nbsp;a.m.</em></h1>
+    <p class="lede rv">Optify builds the website your customers look for, and the AI agent that answers them when you can't — calls, messages and bookings, around the clock.</p>
+    <div class="ctas rv">
+      <a class="btn btn--ink" href="https://calendly.com/a7mad-3del1995/20min" target="_blank" rel="noopener">Book a free 20-min call
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a class="btn btn--ghost" href="#work">See demo builds</a>
+    </div>
+    <p class="note rv">We build your demo site first. You decide after.</p>
+  </div>
+
+  <div class="demo rv" aria-label="Interactive example: a customer message at 2:14 a.m.">
+    <div class="demo__top">
+      <span class="clock">2:14 AM <small>Tuesday</small></span>
+      <div class="toggle" id="tg" data-on="1" role="group" aria-label="Agent">
+        <span class="pill"></span>
+        <button aria-pressed="false" data-v="0">Without</button>
+        <button aria-pressed="true" data-v="1">With Optify</button>
+      </div>
+    </div>
+    <div class="thread" id="thread" aria-live="polite">
+      <div class="who"><i></i><div><b>Your Salon</b><small id="status" class="live">AI agent · replies instantly</small></div></div>
+    </div>
+    <div class="demo__foot"><span>Outcome</span><b id="outcome">—</b></div>
+  </div>
+</div>
+
+<section id="services">
+  <div class="wrap">
+    <div class="head"><h2 class="rv">One system that <em>finds</em>, answers and books.</h2><p class="rv">Three things, built to work together. Start with one, add the rest when it pays off.</p></div>
+    <div class="bento">
+      <article class="tile t-web rv">
+        <span class="cap">01 — Website</span>
+        <h3>A site that looks like you, not a template</h3>
+        <p>Your real reviews, hours, photos and a one-tap call button. Fast on phones, in your customers' language.</p>
+        <div class="art">
+          <div class="browser">
+            <div class="browser__bar"><i></i><i></i><i></i><span>yourbusiness.com</span></div>
+            <div class="site">
+              <div><div class="h"></div><div class="h"></div><div class="l"></div><div class="l s"></div><div class="stars"><i></i><i></i><i></i><i></i><i></i></div><span class="b"></span></div>
+              <div class="ph"></div>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="tile t-agent rv">
+        <span class="cap">02 — AI agent</span>
+        <h3>Answers every message, 24/7</h3>
+        <p>Trained on your services and prices. Replies, qualifies and books — then hands off to you when it should.</p>
+        <div class="art">
+          <div class="bubbles"><span>Do you take walk-ins today?</span><span class="r">Yes — 3:30 or 5:00 is free. Want one?</span><span>5 please</span><span class="r">Booked ✓ Reminder sent.</span></div>
+          <div class="langs"><b>WhatsApp</b><b>Instagram</b><b>Website chat</b><b>Phone</b></div>
+        </div>
+      </article>
+      <article class="tile t-auto rv">
+        <span class="cap">03 — Automation</span>
+        <h3>The busywork, done for you</h3>
+        <p>Bookings, reminders, follow-ups and review requests run on their own.</p>
+        <div class="art"><div class="flow"><span class="node">New booking</span><span class="wire"></span><span class="node">Reminder</span><span class="wire"></span><span class="node">Review ask</span></div></div>
+      </article>
+      <article class="tile t-demo rv">
+        <span class="cap">How we start</span>
+        <div class="big">Demo <em>first.</em></div>
+        <p>We build a working demo of your site before you pay anything. If it's not right for you, you walk away.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="work">
+  <div class="wrap">
+    <div class="head"><h2 class="rv">Recent <em>demo</em> builds</h2><p class="rv">Free demos we built for local businesses in Toronto. Live and clickable.</p></div>
+    <div class="work">
+      <a class="case rv" href="https://ahmedadel95251.github.io/demos/heng-salon-toronto/" target="_blank" rel="noopener">
+        <div class="case__img" style="background:linear-gradient(140deg,#2b2b30,#7a5b4d)">Barber · Chinatown</div>
+        <h3>Heng Salon</h3><div class="row"><span>Toronto · demo site</span><span class="go">↗</span></div></a>
+      <a class="case rv" href="https://ahmedadel95251.github.io/demos/t-and-c-hair-salon-toronto/" target="_blank" rel="noopener">
+        <div class="case__img" style="background:linear-gradient(140deg,#c6a58c,#5d4a6a)">Hair salon</div>
+        <h3>T &amp; C Hair Salon</h3><div class="row"><span>Toronto · demo site</span><span class="go">↗</span></div></a>
+      <a class="case rv" href="https://ahmedadel95251.github.io/demos/bens-den-barbershop-toronto/" target="_blank" rel="noopener">
+        <div class="case__img" style="background:linear-gradient(140deg,#1d2a24,#b3874f)">Barbershop</div>
+        <h3>Ben's Den Barbershop</h3><div class="row"><span>Toronto · demo site</span><span class="go">↗</span></div></a>
+    </div>
+    <p class="ph-note rv"><b>Placeholder</b> Client results and testimonials go here once launched projects can be shared.</p>
+  </div>
+</section>
+
+<section id="process">
+  <div class="wrap">
+    <div class="head"><h2 class="rv">Three steps. <em>No</em> long contracts.</h2><p class="rv"><b style="font-weight:500">Placeholder:</b> pricing and timelines to confirm.</p></div>
+    <div class="steps">
+      <div class="step rv"><div class="n">1</div><h3>We build your demo</h3><p>From your Google reviews, hours and photos — free.</p></div>
+      <div class="step rv"><div class="n">2</div><h3>20-minute call</h3><p>We walk through it and map where an AI agent saves you time.</p></div>
+      <div class="step rv"><div class="n">3</div><h3>Launch</h3><p>Your site goes live on your domain, agent and automations switched on.</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="final rv">
+    <div><h2>Stop missing the <em>2 a.m.</em> customer.</h2><p style="margin-top:16px;max-width:30em">Book a free 20-minute call. We'll show you your demo and what an agent would answer for you.</p></div>
+    <div style="justify-self:end"><a class="btn btn--ink" href="https://calendly.com/a7mad-3del1995/20min" target="_blank" rel="noopener">Book the call
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+  </div>
+  <footer><span>© Optify · optify.cc</span><span>Websites · AI agents · Automation</span></footer>
+</div>
+</main>
+
+<script>
+document.documentElement.classList.add('js');
+const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// scroll reveal, staggered per batch
+const io = new IntersectionObserver(es => {
+  let n = 0;
+  es.forEach(e => { if (e.isIntersecting) { e.target.style.transitionDelay = (n++ * 60) + 'ms'; e.target.classList.add('on'); io.unobserve(e.target); } });
+}, { rootMargin: '0px 0px -8% 0px' });
+document.querySelectorAll('.rv').forEach(el => io.observe(el));
+
+// 2 a.m. demo: one script per state, replayed on toggle
+const thread = document.getElementById('thread'), out = document.getElementById('outcome'),
+      status = document.getElementById('status'), tg = document.getElementById('tg');
+const SCRIPTS = {
+  0: [['them','Hi! Any chance I can get a cut tomorrow morning?',300],
+      ['sys','Seen · no reply',1400],
+      ['them','Hello?',2600],
+      ['sys','Customer booked somewhere else',3800]],
+  1: [['them','Hi! Any chance I can get a cut tomorrow morning?',300],
+      ['typing','',900],
+      ['us','Hi! Yes — tomorrow we have these times open:',1800],
+      ['slot','9:30|10:15|11:00',2400],
+      ['them','10:15 please 🙏',3300],
+      ['pick','',3700],
+      ['us','Booked for 10:15 ✓ I\'ll send a reminder tonight.',4300]]
+};
+let timers = [];
+function play(v) {
+  timers.forEach(clearTimeout); timers = [];
+  thread.querySelectorAll('.msg').forEach(m => m.remove());
+  status.textContent = v ? 'AI agent · replies instantly' : 'Closed · last seen 9:02 PM';
+  status.className = v ? 'live' : '';
+  out.textContent = '—'; out.className = '';
+  for (const [kind, text, at] of SCRIPTS[v]) timers.push(setTimeout(() => {
+    if (kind === 'pick') { thread.querySelectorAll('.slot span')[1]?.classList.add('pick'); return; }
+    thread.querySelector('.msg.typing-wrap')?.remove();
+    const m = document.createElement('div');
+    if (kind === 'typing') { m.className = 'msg us typing-wrap'; m.innerHTML = '<span class="typing"><i></i><i></i><i></i></span>'; m.style.padding = 0; }
+    else if (kind === 'slot') { m.className = 'msg slot'; m.innerHTML = text.split('|').map(t => `<span>${t}</span>`).join(''); }
+    else { m.className = 'msg ' + kind; m.textContent = text; }
+    thread.appendChild(m);
+    requestAnimationFrame(() => requestAnimationFrame(() => m.classList.add('in')));
+  }, calm ? 0 : at));
+  timers.push(setTimeout(() => {
+    out.textContent = v ? 'Booked while you slept' : 'Lost customer';
+    out.className = v ? 'won' : 'lost';
+  }, calm ? 0 : (v ? 4700 : 4100)));
+}
+tg.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  const v = +b.dataset.v;
+  tg.dataset.on = v;
+  tg.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b));
+  play(v);
+});
+play(1);
+</script>
+</body>
+</html>
